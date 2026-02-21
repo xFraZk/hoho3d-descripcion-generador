@@ -60,14 +60,20 @@ details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius
 </head>
 <body>
 <header>
-<div class="brand">
-<h1>HOHO 3D</h1>
-<span>Generador de Productos</span>
-</div>
-<div class="actions">
-<button class="btn btn-cyan" id="copyBtn" onclick="copyCode()">Copiar Código Final</button>
-</div>
-</header>
+    <div class="brand">
+      <h1>HOHO 3D</h1>
+      <span>Generador</span>
+      
+      <div style="margin-left: 20px; display: flex; gap: 10px; border-left: 1px solid #374151; padding-left: 20px;">
+        <a href="index.html" style="color: #fff; text-decoration: none; font-size: 12px; font-weight: bold; background: #1f2937; padding: 6px 12px; border-radius: 6px; transition: 0.3s;" onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#1f2937'">Pre armado</a>
+        
+        <a href="blanco.html" style="color: #000; text-decoration: none; font-size: 12px; font-weight: bold; background: #00e5ff; padding: 6px 12px; border-radius: 6px; transition: 0.3s;" onmouseover="this.style.background='#00b8cc'" onmouseout="this.style.background='#00e5ff'">Plantilla Blanco</a>
+      </div>
+      </div>
+    <div class="actions">
+      <button class="btn btn-cyan" id="copyBtn" onclick="copyCode()">Copiar Código Final</button>
+    </div>
+  </header>
 <div class="main-workspace">
 <div class="editor-panel">
 <div class="tabs-header">
@@ -388,3 +394,4 @@ initForm();
 </script>
 </body>
 </html>
+
