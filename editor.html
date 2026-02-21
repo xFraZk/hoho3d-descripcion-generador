@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMS Hoho 3D | Generador Tienda Negocio</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; padding: 0; background: #070b14; color: #fff; font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+header { background: rgba(11, 18, 32, 0.95); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00e5ff; box-shadow: 0 4px 20px rgba(0, 229, 255, 0.15); z-index: 10; }
+.brand { display: flex; align-items: center; gap: 15px; }
+.brand h1 { margin: 0; font-size: 20px; color: #fff; letter-spacing: 1px; }
+.brand span { background: #7c3aed; color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+.btn { padding: 10px 20px; border: none; border-radius: 8px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+.btn-cyan { background: #00e5ff; color: #000; box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
+.btn-cyan:hover { background: #00b8cc; box-shadow: 0 0 25px rgba(0, 229, 255, 0.6); }
+.btn-outline { background: transparent; color: #00e5ff; border: 1px solid #00e5ff; padding: 8px 15px; font-size: 12px; margin-top: 10px;}
+.btn-outline:hover { background: rgba(0, 229, 255, 0.1); }
+.btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 8px 12px; border-radius: 6px; cursor: pointer; height: fit-content; font-size: 12px; font-weight: bold;}
+.btn-danger:hover { background: #ef4444; color: #fff; }
+.btn-success { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; padding: 8px 12px; border-radius: 6px; cursor: pointer; height: fit-content; font-size: 12px; font-weight: bold;}
+.btn-success:hover { background: #10b981; color: #fff; }
+.btn-toggle { background: #374151; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+.btn-toggle:hover { background: #4b5563; }
+.btn-toggle.off { background: #ef4444; color: #fff; }
+.btn-toggle.off:hover { background: #dc2626; }
+.main-workspace { display: flex; flex: 1; height: calc(100vh - 66px); }
+.editor-panel { width: 45%; display: flex; flex-direction: column; background: #0b101a; border-right: 1px solid #1f2937; }
+.tabs-header { display: flex; background: #111827; }
+.tab-btn { flex: 1; padding: 15px; background: transparent; border: none; color: #6b7280; font-weight: 600; font-size: 12px; text-transform: uppercase; cursor: pointer; border-bottom: 2px solid transparent; }
+.tab-btn.active { color: #00e5ff; border-bottom: 2px solid #00e5ff; background: rgba(0, 229, 255, 0.05); }
+.tab-content { display: none; flex: 1; overflow-y: auto; padding: 25px 25px 50px 25px; }
+.tab-content.active { display: block; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0d121d; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+.form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+.header-with-toggle { display: flex; justify-content: space-between; align-items: center; }
+.header-with-toggle label { font-size: 11px; color: #9ca3af; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin: 0; }
+.form-control { background: #151b2b; border: 1px solid #374151; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; font-size: 13px; outline: none; width: 100%;}
+.form-control:focus { border-color: #00e5ff; }
+textarea.form-control { resize: vertical; min-height: 80px; }
+details { background: #111827; border: 1px solid #1f2937; border-radius: 8px; margin-bottom: 15px; display: block; }
+summary { background: #151b2b; padding: 15px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; outline: none; transition: background 0.3s; border-radius: 8px; }
+summary:hover { background: #1a2235; }
+details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid #1f2937; }
+.accordion-content { padding: 15px; background: #0b101a; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+.visibility-toggle { display: flex; justify-content: flex-end; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #1f2937; }
+.dynamic-list { display: flex; flex-direction: column; gap: 10px; }
+.dynamic-row { display: flex; gap: 10px; align-items: flex-start; background: #151b2b; padding: 12px; border-radius: 8px; border: 1px solid #374151; transition: opacity 0.3s; }
+.dynamic-row.row-hidden { opacity: 0.4; border-color: #ef4444; }
+.dynamic-row .inputs { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.dynamic-row input, .dynamic-row textarea { width: 100%; background: #0b101a; border: 1px solid #374151; color: #fff; padding: 8px; border-radius: 4px; font-family: inherit; font-size: 12px; resize: vertical; min-height: 40px;}
+.row-actions { display: flex; flex-direction: column; gap: 6px; }
+.preview-panel { width: 55%; background: #1e1e1e; display: flex; flex-direction: column; }
+.preview-container { flex: 1; padding: 30px; overflow-y: auto; background-image: radial-gradient(#374151 1px, transparent 1px); background-size: 20px 20px; }
+#rawCodeEditor { flex: 1; background: #0d121d; border: none; color: #a5f3fc; font-family: 'Consolas', monospace; font-size: 12px; line-height: 1.5; padding: 20px; width: 100%; height: 100%; resize: none; outline: none; display: block; }
+</style>
+</head>
+<body>
+<header>
+<div class="brand">
+<h1>HOHO 3D</h1>
+<span>Generador de Productos</span>
+</div>
+<div class="actions">
+<button class="btn btn-cyan" id="copyBtn" onclick="copyCode()">Copiar Código Final</button>
+</div>
+</header>
+<div class="main-workspace">
+<div class="editor-panel">
+<div class="tabs-header">
+<button class="tab-btn active" onclick="switchTab('form')">Editor Visual</button>
+<button class="tab-btn" onclick="switchTab('code')">Código Fuente</button>
+</div>
+<div id="tab-form" class="tab-content active">
+<details open>
+<summary>Información Principal</summary>
+<div class="accordion-content">
+<div class="form-group">
+<div class="header-with-toggle">
+<label>ID del Video (YouTube)</label>
+<button id="btn-vis-video" class="btn-toggle" onclick="toggleVis('video')">Ocultar</button>
+</div>
+<input type="text" id="v_video" class="form-control" oninput="updateData('video', this.value)">
+</div>
+<div class="form-group">
+<div class="header-with-toggle">
+<label>Título del Producto</label>
+<button id="btn-vis-title" class="btn-toggle" onclick="toggleVis('title')">Ocultar</button>
+</div>
+<input type="text" id="v_title" class="form-control" oninput="updateData('title', this.value)">
+</div>
+<div class="form-group">
+<div class="header-with-toggle">
+<label>Texto Resaltado (Neón)</label>
+<button id="btn-vis-badge" class="btn-toggle" onclick="toggleVis('badge')">Ocultar</button>
+</div>
+<input type="text" id="v_badge" class="form-control" oninput="updateData('badge', this.value)">
+</div>
+<div class="form-group">
+<div class="header-with-toggle">
+<label>Descripción Header</label>
+<button id="btn-vis-desc" class="btn-toggle" onclick="toggleVis('desc')">Ocultar</button>
+</div>
+<textarea id="v_desc" class="form-control" oninput="updateData('desc', this.value)"></textarea>
+</div>
+</div>
+</details>
+<details>
+<summary>Características Destacadas (Cian)</summary>
+<div class="accordion-content">
+<div class="visibility-toggle">
+<button id="btn-sec-caracteristicas" class="btn-danger" onclick="toggleSection('caracteristicas')">Ocultar Sección Completa</button>
+</div>
+<div id="list-caracteristicas" class="dynamic-list"></div>
+<button class="btn btn-outline" onclick="addRow('caracteristicas')">+ Agregar Información</button>
+</div>
+</details>
+<details>
+<summary>¿Qué Incluye? (Azul)</summary>
+<div class="accordion-content">
+<div class="visibility-toggle">
+<button id="btn-sec-incluye" class="btn-danger" onclick="toggleSection('incluye')">Ocultar Sección Completa</button>
+</div>
+<div id="list-incluye" class="dynamic-list"></div>
+<button class="btn btn-outline" onclick="addRow('incluye')">+ Agregar Información</button>
+</div>
+</details>
+<details>
+<summary>Ficha Técnica (Fucsia)</summary>
+<div class="accordion-content">
+<div class="visibility-toggle">
+<button id="btn-sec-ficha" class="btn-danger" onclick="toggleSection('ficha')">Ocultar Sección Completa</button>
+</div>
+<div id="list-ficha" class="dynamic-list"></div>
+<button class="btn btn-outline" onclick="addRow('ficha')">+ Agregar Información</button>
+</div>
+</details>
+<details>
+<summary>Recomendado Para (Ámbar)</summary>
+<div class="accordion-content">
+<div class="visibility-toggle">
+<button id="btn-sec-recomendado" class="btn-danger" onclick="toggleSection('recomendado')">Ocultar Sección Completa</button>
+</div>
+<div class="form-group">
+<label>Texto descriptivo</label>
+<textarea id="v_recomendado" class="form-control" oninput="updateData('recomendado', this.value)"></textarea>
+</div>
+</div>
+</details>
+<details>
+<summary>Beneficios Hoho 3D (Verde)</summary>
+<div class="accordion-content">
+<div class="visibility-toggle">
+<button id="btn-sec-beneficios" class="btn-danger" onclick="toggleSection('beneficios')">Ocultar Sección Completa</button>
+</div>
+<div class="form-group">
+<label>Escribí un beneficio por línea</label>
+<textarea id="v_beneficios" class="form-control" oninput="updateData('beneficios', this.value)"></textarea>
+</div>
+</div>
+</details>
+<details>
+<summary>Preguntas Frecuentes (Morado)</summary>
+<div class="accordion-content">
+<div class="visibility-toggle">
+<button id="btn-sec-faq" class="btn-danger" onclick="toggleSection('faq')">Ocultar Sección Completa</button>
+</div>
+<div id="list-faq" class="dynamic-list"></div>
+<button class="btn btn-outline" onclick="addRow('faq')">+ Agregar Pregunta</button>
+</div>
+</details>
+</div>
+<div id="tab-code" class="tab-content" style="padding: 0; display: none; height: 100%;">
+<textarea id="rawCodeEditor" readonly></textarea>
+</div>
+</div>
+<div class="preview-panel">
+<div class="preview-container" id="previewContainer"></div>
+</div>
+</div>
+<script>
+const data = {
+video: "bLf7CNtLCJc",
+title: "Bambu Lab A1 / A1 Combo — Rápida, precisa y silenciosa.",
+badge: "Envío GRATIS a todo el país.",
+desc: "La A1 es una FDM de cama móvil (bedslinger) con velocidad y calidad estilo CoreXY, calibración totalmente automática y control avanzado de flujo. La versión Combo incluye AMS lite para impresión multicolor de hasta 4 materiales. Volumen 256 x 256 x 256 mm, boquilla 300 °C, cama hasta 100 °C, y cancelación activa de ruido (≤48 dB en Modo Silencioso).",
+recomendado: "Usuarios que buscan alta velocidad real con calibración 100% automática, multicolor (con AMS lite), y piezas de volumen medio con excelente precisión.",
+beneficios: "Envío GRATIS a todo el país\n3 cuotas sin interés\n10% OFF por transferencia\nPostventa real: perfiles, materiales y puesta a punto\nGarantía oficial: 12 meses",
+caracteristicas: [
+{ v: true, t: "Impresión multicolor (AMS lite)", d: "La A1 Combo incluye AMS lite (hasta 4 colores). En A1 estándar es opcional." },
+{ v: true, t: "Compensación activa del caudal", d: "Sensor de presión en la boquilla + algoritmo de flow para extrusión precisa a alta velocidad." },
+{ v: true, t: "Calibración totalmente automática", d: "Auto Z, auto nivelado, resonancias y presión de boquilla en cada impresión." },
+{ v: true, t: "Boquilla de cambio rápido", d: "Hotend one-clip para colocar y quitar en segundos. Incluye cortador de filamento." },
+{ v: true, t: "Silenciosa (≤48 dB)", d: "Cancelación activa del ruido del motor + Modo Silencioso." },
+{ v: true, t: "Velocidad CoreXY-like", d: "Hasta 500 mm/s y 10.000 mm/s² — speed benchy ~14 min listo para usar." },
+{ v: true, t: "Rails y chasis metálicos", d: "Estructura rígida, cojinetes/rieles metálicos y MCU potente para estabilidad a alta aceleración." },
+{ v: true, t: "Pantalla táctil 3,5 IPS", d: "Interfaz 320x240 tipo smartphone, con guías paso a paso." }
+],
+incluye: [
+{ v: true, t: "Impresora", d: "Bambu Lab A1 (parcialmente ensamblada) — o A1 Combo con AMS lite (4 colores)." },
+{ v: true, t: "Plataforma", d: "PEI Bambu Texturizado (compatible Smooth PEI / High Temp / Dual-Texture PEI)." },
+{ v: true, t: "Accesorios", d: "Herramientas básicas, repuestos, manual paso a paso. Cámara para timelapse integrada." },
+{ v: true, t: "Conectividad / Entrada", d: "Wi-Fi, Micro SD, Bambu-Bus." }
+],
+ficha: [
+{ v: true, t: "Tecnología", d: "FDM (cama móvil / bedslinger)" },
+{ v: true, t: "Área de impresión", d: "256 x 256 x 256 mm" },
+{ v: true, t: "Velocidad / Aceleración", d: "Hasta 500 mm/s · 10.000 mm/s²" },
+{ v: true, t: "Resolución", d: "± 0,1 mm" },
+{ v: true, t: "Extrusora / Hotend", d: "Engranajes de acero endurecido · Hotend all-metal · Boquilla 0,4 mm (0,2/0,6/0,8 opc.) · Cambio rápido" },
+{ v: true, t: "Diámetro de filamento", d: "1,75 mm" },
+{ v: true, t: "Materiales compatibles", d: "PLA, PETG, TPU, PVA (otros técnicos: no recomendados por fabricante)" },
+{ v: true, t: "Temp. boquilla / cama", d: "Hasta 300 °C / hasta 100 °C" },
+{ v: true, t: "Nivelación", d: "Automática completa (Z-offset, malla, resonancias, presión de boquilla)" },
+{ v: true, t: "Pantalla / UI", d: "Táctil IPS 3,5 (320x240)" },
+{ v: true, t: "Formatos / Software", d: "Bambu Studio (compatible con G-code estándar de PrusaSlicer / Cura*)" },
+{ v: true, t: "Conectividad", d: "Wi-Fi, Micro SD, Bambu-Bus" },
+{ v: true, t: "Energía", d: "Entrada: 100–240 VAC, 50/60 Hz · Potencia máx. ref.: 1300 W@220V" }
+],
+faq: [
+{ v: true, t: "¿A1 es CoreXY?", d: "No, es cama móvil, pero Bambu indica CoreXY speed & quality." },
+{ v: true, t: "¿Viene lista para multicolor?", d: "A1 Combo sí (incluye AMS lite). La A1 estándar requiere comprar AMS lite por separado." },
+{ v: true, t: "¿Qué tan silenciosa es?", d: "Con cancelación de ruido + Modo Silencioso puede trabajar por debajo de 48 dB." },
+{ v: true, t: "¿Hace el speed benchy de 14 min?", d: "Bambu muestra ~14 min siguiendo reglas Speed Benchy, pre-configurado de fábrica." }
+],
+visibility: {
+video: true,
+title: true,
+badge: true,
+desc: true,
+caracteristicas: true,
+incluye: true,
+ficha: true,
+recomendado: true,
+beneficios: true,
+faq: true
+}
+};
+function initForm() {
+document.getElementById('v_video').value = data.video;
+document.getElementById('v_title').value = data.title;
+document.getElementById('v_badge').value = data.badge;
+document.getElementById('v_desc').value = data.desc;
+document.getElementById('v_recomendado').value = data.recomendado;
+document.getElementById('v_beneficios').value = data.beneficios;
+renderList('caracteristicas');
+renderList('incluye');
+renderList('ficha');
+renderList('faq');
+refreshEngine();
+}
+function toggleVis(key) {
+data.visibility[key] = !data.visibility[key];
+const btn = document.getElementById('btn-vis-' + key);
+if(data.visibility[key]) {
+btn.innerText = 'Ocultar';
+btn.className = 'btn-toggle';
+} else {
+btn.innerText = 'Mostrar';
+btn.className = 'btn-toggle off';
+}
+refreshEngine();
+}
+function toggleSection(sectionId) {
+data.visibility[sectionId] = !data.visibility[sectionId];
+const btn = document.getElementById('btn-sec-' + sectionId);
+if(data.visibility[sectionId]) {
+btn.innerText = 'Ocultar Sección Completa';
+btn.className = 'btn-danger';
+} else {
+btn.innerText = 'Mostrar Sección Completa';
+btn.className = 'btn-success';
+}
+refreshEngine();
+}
+function toggleItemVis(listName, index) {
+data[listName][index].v = !data[listName][index].v;
+renderList(listName);
+refreshEngine();
+}
+function renderList(listName) {
+const container = document.getElementById('list-' + listName);
+container.innerHTML = '';
+data[listName].forEach((item, index) => {
+let rowClass = item.v === false ? 'dynamic-row row-hidden' : 'dynamic-row';
+let btnToggleClass = item.v === false ? 'btn-toggle off' : 'btn-toggle';
+let btnToggleText = item.v === false ? 'Mostrar' : 'Ocultar';
+container.innerHTML += `
+<div class="${rowClass}">
+<div class="inputs">
+<input type="text" placeholder="Título" value="${item.t.replace(/"/g, '&quot;')}" oninput="updateRowData('${listName}', ${index}, 't', this.value)">
+<textarea placeholder="Descripción" oninput="updateRowData('${listName}', ${index}, 'd', this.value)">${item.d}</textarea>
+</div>
+<div class="row-actions">
+<button class="${btnToggleClass}" onclick="toggleItemVis('${listName}', ${index})">${btnToggleText}</button>
+<button class="btn-danger" style="padding: 4px; border-radius: 4px; font-size: 10px;" onclick="removeRow('${listName}', ${index})">BORRAR</button>
+</div>
+</div>`;
+});
+}
+function addRow(listName) {
+data[listName].push({ v: true, t: "", d: "" });
+renderList(listName);
+refreshEngine();
+}
+function removeRow(listName, index) {
+data[listName].splice(index, 1);
+renderList(listName);
+refreshEngine();
+}
+function updateRowData(listName, index, field, value) {
+data[listName][index][field] = value;
+refreshEngine();
+}
+function updateData(field, value) {
+data[field] = value;
+refreshEngine();
+}
+function buildTableHTML(listName, titleSection, rgbBorder, hexTitle, hexText1, hexText2) {
+if (!data.visibility[listName]) return '';
+let visibleItems = data[listName].filter(item => item.v !== false);
+if (visibleItems.length === 0) return '';
+let rows = visibleItems.map((item, index) => {
+let isLast = index === visibleItems.length - 1;
+let borderBottom = isLast ? '' : ' border-bottom: 1px solid rgba(255,255,255,0.03);';
+let bg = (index % 2 === 0) ? `background: rgba(${rgbBorder}, 0.05);` : '';
+return `<tr style="${bg}"><td style="padding: 12px 16px; color: ${hexText1}; width: 34%;${borderBottom}"><strong>${item.t}</strong></td><td style="padding: 12px 16px; color: ${hexText2};${borderBottom}">${item.d}</td></tr>`;
+}).join('');
+return `<table style="width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 14px; background: rgba(14, 23, 38, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(${rgbBorder}, 1); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); margin-bottom: 20px;" role="table"><thead style="background: rgba(${rgbBorder}, 0.15);"><tr><th style="text-align: left; padding: 14px 16px; color: ${hexTitle}; font-size: 13px; letter-spacing: .06em; text-transform: uppercase;" colspan="2">${titleSection}</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+function buildRecomendadoHTML() {
+if (!data.visibility.recomendado || !data.recomendado.trim()) return '';
+return `<table style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 14px; background: rgba(14, 23, 38, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid #f59e0b; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); margin-bottom: 20px;" role="table"><thead style="background: rgba(245, 158, 11, 0.15);"><tr><th style="text-align: left; padding: 14px 16px; color: #fbbf24; font-size: 13px; letter-spacing: .06em; text-transform: uppercase;">RECOMENDADO PARA</th></tr></thead><tbody><tr><td style="padding: 16px; color: #fef3c7;">${data.recomendado}</td></tr></tbody></table>`;
+}
+function buildBenefitsHTML() {
+if (!data.visibility.beneficios) return '';
+let lines = data.beneficios.split('\n').filter(l => l.trim() !== '');
+if(lines.length === 0) return '';
+let tags = lines.map(l => `<span style="background: rgba(6, 78, 59, 0.4); padding: 8px 12px; border-radius: 8px; border: 1px solid #10b981; font-size: 14px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);">${l.trim()}</span>`).join(' ');
+return `<table style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 14px; background: rgba(14, 23, 38, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid #10b981; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); margin-bottom: 20px;" role="table"><thead style="background: rgba(16, 185, 129, 0.15);"><tr><th style="text-align: left; padding: 14px 16px; color: #34d399; font-size: 13px; letter-spacing: .06em; text-transform: uppercase;">BENEFICIOS HOHO 3D</th></tr></thead><tbody><tr><td style="padding: 16px; color: #d1fae5; display: flex; flex-wrap: wrap; gap: 12px;">${tags}</td></tr></tbody></table>`;
+}
+function refreshEngine() {
+let videoHTML = data.visibility.video ? `<div style="background: linear-gradient(135deg, #4c1d95, #7c3aed 60%, #a78bfa); padding: 4px; border-radius: 18px; box-shadow: 0 12px 28px rgba(124, 58, 237, 0.35); margin-bottom: 24px;"><div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px; background: #0b1220;"><iframe style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;" title="Video" src="https://www.youtube.com/embed/${data.video}?rel=0&amp;modestbranding=1&amp;playsinline=1" allowfullscreen loading="lazy"></iframe></div></div>` : '';
+let badgeHTML = data.visibility.badge ? ` <span style="color: #00e5ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.4); white-space: nowrap;">${data.badge}</span>` : '';
+let titleHTML = data.visibility.title ? `<h1 style="margin: 0; font-size: 24px; line-height: 1.25; color: #ffffff; font-weight: 700;">${data.title}${badgeHTML}</h1>` : '';
+let descHTML = data.visibility.desc ? `<p style="margin: 12px 0 0; color: #e2e8f0; font-size: 15px;">${data.desc}</p>` : '';
+let headerHTML = (titleHTML !== '' || descHTML !== '') ? `<div style="background: linear-gradient(135deg, rgba(76, 29, 149, 0.8), rgba(124, 58, 237, 0.8)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);">${titleHTML}${descHTML}</div>` : '';
+let finalHTML = `<div style="max-width: 980px; margin: 24px auto; font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #eae6ff; background: #050b14; padding: 20px; border-radius: 18px; box-sizing: border-box;">${videoHTML}${headerHTML}<div style="display: block;">${buildTableHTML('caracteristicas', 'CARACTERÍSTICAS DESTACADAS', '0, 229, 255', '#00e5ff', '#e0fbff', '#a5f3fc')}${buildTableHTML('incluye', '¿QUÉ INCLUYE?', '59, 130, 246', '#60a5fa', '#dbeafe', '#bfdbfe')}${buildTableHTML('ficha', 'FICHA TÉCNICA', '236, 72, 153', '#f472b6', '#fbcfe8', '#f9a8d4')}${buildRecomendadoHTML()}${buildBenefitsHTML()}${buildTableHTML('faq', 'PREGUNTAS FRECUENTES (FAQ)', '139, 92, 246', '#a78bfa', '#e9d5ff', '#ddd6fe')}</div><div style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 24px; letter-spacing: 0.05em;">Hoho 3D &mdash; Tienda de Impresoras 3D & Filamentos</div></div>`;
+document.getElementById('rawCodeEditor').value = finalHTML.trim();
+document.getElementById('previewContainer').innerHTML = finalHTML.trim();
+}
+function switchTab(tabName) {
+document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(content => {
+content.classList.remove('active');
+content.style.display = 'none';
+});
+if(tabName === 'form') {
+document.querySelectorAll('.tab-btn')[0].classList.add('active');
+document.getElementById('tab-form').classList.add('active');
+document.getElementById('tab-form').style.display = 'block';
+} else {
+document.querySelectorAll('.tab-btn')[1].classList.add('active');
+document.getElementById('tab-code').classList.add('active');
+document.getElementById('tab-code').style.display = 'block';
+}
+}
+function copyCode() {
+const codeToCopy = document.getElementById('rawCodeEditor').value;
+const btn = document.getElementById('copyBtn');
+const originalText = btn.innerText;
+navigator.clipboard.writeText(codeToCopy).then(() => {
+btn.innerText = '¡Copiado correctamente ✔!';
+btn.style.background = '#10b981';
+setTimeout(() => {
+btn.innerText = originalText;
+btn.style.background = '#00e5ff';
+}, 3000);
+}).catch(err => {
+alert('Tu navegador bloqueó el copiado automático. Por favor, ve a la pestaña "Código Fuente" y cópialo manualmente.');
+console.error('Error al copiar: ', err);
+});
+}
+initForm();
+</script>
+</body>
+</html>
